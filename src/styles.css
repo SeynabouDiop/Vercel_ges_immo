@@ -1,1 +1,364 @@
-/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary-color: #00c604;
+  --secondary-color: #151b20;
+  --white-color: #fff;
+
+  --text-primary: #00c604;
+  --text-secondary: #151b20;
+  --text-white: #fff;
+  --text-color: #cfd3d7;
+  --text-gray: #999;
+}
+* {
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+  }
+
+  html {
+      scroll-behavior: smooth;
+  }
+
+  body {
+      font-family: "Roboto", sans-serif;
+      font-size: 100%;
+      font-weight: 400;
+      background: #151b20;
+  }
+
+
+
+
+  .navigation-btn {
+      font-size: 2rem;
+      color: var(--primary-color);
+  }
+
+  /*Navbar*/
+  .navigation-wrap {
+      position: fixed;
+      background-color: var(--secondary-color);
+      width: 100%;
+      left: 0;
+      z-index: 1000;
+      -webkit-transition: all 0.3s ease-out;
+      transition: all 0.3s ease-out;
+      font-family: "BBH Sans Hegarty", sans-serif;
+      font-weight: 700;
+  }
+
+  ::-webkit-scrollbar {
+      width: .425rem;
+  }
+
+  ::-webkit-scrollbar-track {
+      background: var(--white-color);
+  }
+
+  ::-webkit-scrollbar-thumb {
+      background: var(--primary-color);
+  }
+
+
+  a {
+      text-decoration: none !important;
+      color: var(--primary-color) !important;
+  }
+
+  a:hover {
+      color: var(--text-color) !important;
+  }
+
+  ul {
+      margin: 0;
+      padding: 0;
+  }
+
+  h1 {
+      font-size: 4.25rem;
+      font-weight: 900;
+      margin-bottom: 3rem;
+      font-family: var(--heading-font);
+      color: var(--white-color);
+      text-transform: capitalize;
+  }
+
+  h2 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      font-family: var(--heading-font);
+      color: var(--text-white);
+      text-transform: capitalize;
+  }
+
+  h4 {
+      font-size: 1.125rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      font-family: var(--heading-font);
+      color: var(--text-secondary);
+      text-transform: capitalize;
+  }
+
+  h5 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      font-family: var(--heading-font);
+      color: var(--text-primary);
+      text-transform: capitalize;
+  }
+
+  p {
+      font-size: 1rem;
+      color: var(--text-color);
+      font-weight: 400;
+      line-height: 1.7rem;
+      letter-spacing: 0.0625rem;
+  }
+
+  /*
+.navigation-wrap .navbar-brand img{
+  width: 13rem;
+}*/
+  .navigation-wrap .nav-item {
+      padding: 0 0.625rem;
+      transition: all 200ms linear;
+  }
+
+  .nav-link {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.0625rem;
+  }
+
+  .navigation-wrap .main-btn {
+      padding: 0.3125rem 1.4375rem;
+      box-shadow: none;
+      margin-left: 0.625rem;
+  }
+
+  .main-btn {
+      padding: 0.625rem 1.875rem;
+      font-size: 0.9375rem;
+      font-weight: 600;
+      text-transform: capitalize;
+      box-shadow: 0 0.0125rem 0.625rem -0.625rem rgba(0 0 0 /10%);
+      -moz-transition: all 0.4s ease-out 0s;
+      -webkit-transition: all 0.4s ease-out 0s;
+      -o-transition: all 0.4s ease-out 0s;
+      -ms-transition: all 0.4s ease-out 0s;
+      transition: all 0.4s ease-out 0s;
+      background-color: var(--primary-color);
+      border: 0.1875rem solid var(--primary-color);
+      color: var(--white-color);
+  }
+
+  .main-btn:hover {
+      background-color: transparent;
+      color: var(--primary-color);
+  }
+
+  .bg-image {
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(50, 50, 50, 0.7)), url('/img1.jpg');
+      height: 100vh;
+      /* Hauteur de la vue (viewport height) */
+      min-height: 500px;
+      /* Hauteur minimale pour les petits écrans */
+      background-size: cover;
+      /* L'image couvre toute la zone */
+      background-position: center;
+      /* L'image est centrée */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      /* Espacement interne pour le contenu */
+  }
+
+  /* Style pour les images circulaires */
+  .card-img-circle {
+      width: 150px;
+      /* Taille fixe pour le cercle */
+      height: 150px;
+      /* Taille fixe pour le cercle */
+      border-radius: 50%;
+      /* Rend l'image circulaire */
+      object-fit: cover;
+      /* Conserve le ratio d'aspect */
+      display: block;
+      /* Permet de centrer l'image */
+      margin: 0 auto;
+      /* Centre l'image horizontalement */
+      margin-top: -75px;
+      /* Déplace l'image vers le haut pour qu'elle dépasse la carte */
+  }
+
+  /* Style pour les cartes */
+  .card {
+      border: none;
+      /* Supprime la bordure */
+      text-align: center;
+      /* Centre le texte */
+      padding-top: 75px;
+      /* Compense le déplacement de l'image */
+  }
+
+  /* Style pour le texte intro */
+  .intro-text {
+      margin-bottom: 50px;
+      /* Espacement entre le texte intro et les cartes */
+  }
+
+  .quote-icon {
+      font-size: 3rem;
+      color: var(--primary-color);
+      /* Couleur dorée pour les guillemets */
+      margin-bottom: 1rem;
+  }
+
+  .person img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 1rem;
+  }
+
+  .person h4 {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+  }
+
+  .person span {
+      color: var(--primary-color);
+      /* Couleur dorée pour les étoiles */
+  }
+
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+      background-color: var(--primary-color);
+      /* Couleur des flèches */
+      border-radius: 50%;
+      padding: 10px;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+      width: 5%;
+  }
+
+  /* Style pour le footer */
+  footer {
+      background-color: var(--secondary-color);
+      /* Couleur de fond sombre */
+      color: #ffffff;
+      /* Texte en blanc */
+      padding: 40px 0;
+      font-family: "BBH Sans Hegarty", sans-serif;
+  }
+
+  footer a {
+      color: #ffffff;
+      /* Liens en blanc */
+      text-decoration: none;
+      /* Pas de soulignement */
+  }
+
+  footer a:hover {
+      color: var(--primary-color);
+      /* Couleur dorée au survol */
+  }
+
+  .footer-links {
+      list-style: none;
+      /* Supprime les puces */
+      padding-left: 0;
+  }
+
+  .footer-links li {
+      margin-bottom: 10px;
+  }
+
+  .social-icons a {
+      font-size: 1.5rem;
+      /* Taille des icônes */
+      margin-right: 15px;
+      color: var(--primary-color) !important;
+      /* Couleur dorée */
+  }
+
+  .social-icons a:hover {
+      color: #ffffff;
+      /* Couleur blanche au survol */
+  }
+
+  .copyright {
+      background-color: var(--primary-color);
+      /* Fond plus sombre pour la section copyright */
+      padding: 10px 0;
+      text-align: center;
+      color: var(--white-color);
+  }
+
+  /* Style pour le formulaire de newsletter */
+  .newsletter-form {
+      margin-bottom: 20px;
+      /* Espacement entre le formulaire et les icônes */
+  }
+
+  .newsletter-form input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      /* Espacement sous le champ de saisie */
+  }
+
+  .newsletter-form button {
+      width: 100%;
+      padding: 10px;
+      background-color: var(--primary-color);
+      /* Couleur dorée */
+      border: none;
+      border-radius: 5px;
+      color: var(--white-color);
+      /* Texte sombre */
+      font-weight: bold;
+      cursor: pointer;
+  }
+
+  .newsletter-form button:hover {
+      border: 0.1875rem solid var(--primary-color);
+      background-color: transparent;
+      /* Couleur dorée plus foncée au survol */
+      color: var(--white-color);
+  }
+    /* Responsive pour les écrans plus petits */
+    @media (max-width: 768px) {
+      .bg-image {
+          height: auto;
+          /* Hauteur automatique pour s'adapter au contenu */
+          padding: 50px 20px;
+          /* Plus d'espacement interne */
+      }
+  }
+
+  /* Responsive pour les très petits écrans */
+  @media (max-width: 576px) {
+      .bg-image {
+          background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(50, 50, 50, 0.7)), url('/img12.jpg');
+          /* Image optimisée pour mobile */
+          padding: 30px 15px;
+          /* Espacement réduit */
+          background-size: cover;
+          /* L'image couvre toute la zone */
+          background-position: center;
+          /* L'image est centrée */
+      }
+  }
+

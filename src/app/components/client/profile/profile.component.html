@@ -1,0 +1,366 @@
+<div class="profile-container">
+  <!-- En-tête du profil -->
+  <div class="profile-header">
+    <div class="header-content">
+      <h1>Mon Profil</h1>
+      <p>Gérez vos informations personnelles et vos préférences</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="cancelEdit()" *ngIf="isEditing">
+        <i class="fas fa-times"></i>
+        Annuler
+      </button>
+      <button class="btn btn-primary" (click)="toggleEdit()" *ngIf="!isEditing">
+        <i class="fas fa-edit"></i>
+        Modifier le profil
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages d'alerte -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i>
+    {{ successMessage }}
+  </div>
+
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <div class="profile-content" *ngIf="profile">
+    <!-- Carte d'informations personnelles -->
+    <div class="profile-card">
+      <div class="card-header">
+        <h2>
+          <i class="fas fa-user"></i>
+          Informations Personnelles
+        </h2>
+        <div class="status-badge" [class]="profile.id_utilisateur.statut">
+          {{ profile.id_utilisateur.statut === 'actif' ? 'Actif' : 'Inactif' }}
+        </div>
+      </div>
+
+      <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" *ngIf="isEditing; else viewMode">
+        <div class="form-grid">
+          <!-- Prénom -->
+          <div class="form-group">
+            <label for="prenom" class="form-label">Prénom *</label>
+            <input
+              type="text"
+              id="prenom"
+              formControlName="prenom"
+              class="form-control"
+              [class.error]="profileForm.get('prenom')?.invalid && profileForm.get('prenom')?.touched"
+              placeholder="Votre prénom">
+            <div class="error-message" *ngIf="profileForm.get('prenom')?.invalid && profileForm.get('prenom')?.touched">
+              Le prénom est requis
+            </div>
+          </div>
+
+          <!-- Nom -->
+          <div class="form-group">
+            <label for="nom" class="form-label">Nom *</label>
+            <input
+              type="text"
+              id="nom"
+              formControlName="nom"
+              class="form-control"
+              [class.error]="profileForm.get('nom')?.invalid && profileForm.get('nom')?.touched"
+              placeholder="Votre nom">
+            <div class="error-message" *ngIf="profileForm.get('nom')?.invalid && profileForm.get('nom')?.touched">
+              Le nom est requis
+            </div>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="email" class="form-label">Email *</label>
+            <input
+              type="email"
+              id="email"
+              formControlName="email"
+              class="form-control"
+              [class.error]="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"
+              placeholder="votre@email.com">
+            <div class="error-message" *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+              Veuillez entrer un email valide
+            </div>
+          </div>
+
+          <!-- Téléphone -->
+          <div class="form-group">
+            <label for="telephone" class="form-label">Téléphone</label>
+            <input
+              type="tel"
+              id="telephone"
+              formControlName="telephone"
+              class="form-control"
+              placeholder="+33 1 23 45 67 89">
+          </div>
+
+          <!-- Type de client -->
+          <div class="form-group">
+            <label for="type_client" class="form-label">Type de client</label>
+            <select
+              id="type_client"
+              formControlName="type_client"
+              class="form-control">
+              <option value="particulier">Particulier</option>
+              <option value="societe">Société</option>
+              <option value="investisseur">Investisseur</option>
+            </select>
+          </div>
+
+          <!-- Raison sociale (conditionnel) -->
+          <div class="form-group" *ngIf="profileForm.get('type_client')?.value === 'societe'">
+            <label for="raison_sociale" class="form-label">Raison sociale *</label>
+            <input
+              type="text"
+              id="raison_sociale"
+              formControlName="raison_sociale"
+              class="form-control"
+              placeholder="Nom de votre société">
+          </div>
+
+          <!-- SIRET (conditionnel) -->
+          <div class="form-group" *ngIf="profileForm.get('type_client')?.value === 'societe'">
+            <label for="siret" class="form-label">SIRET</label>
+            <input
+              type="text"
+              id="siret"
+              formControlName="siret"
+              class="form-control"
+              placeholder="123 456 789 01234">
+          </div>
+        </div>
+
+        <!-- Adresse -->
+        <div class="form-section">
+          <h3><i class="fas fa-map-marker-alt"></i> Adresse</h3>
+          <div class="form-grid">
+            <div class="form-group full-width">
+              <label for="adresse" class="form-label">Adresse</label>
+              <input
+                type="text"
+                id="adresse"
+                formControlName="adresse"
+                class="form-control"
+                placeholder="Numéro et nom de rue">
+            </div>
+
+            <div class="form-group">
+              <label for="code_postal" class="form-label">Code postal</label>
+              <input
+                type="text"
+                id="code_postal"
+                formControlName="code_postal"
+                class="form-control"
+                placeholder="75001">
+            </div>
+
+            <div class="form-group">
+              <label for="ville" class="form-label">Ville</label>
+              <input
+                type="text"
+                id="ville"
+                formControlName="ville"
+                class="form-control"
+                placeholder="Paris">
+            </div>
+
+            <div class="form-group">
+              <label for="pays" class="form-label">Pays</label>
+              <select
+                id="pays"
+                formControlName="pays"
+                class="form-control">
+                <option value="France">France</option>
+                <option value="Belgique">Belgique</option>
+                <option value="Suisse">Suisse</option>
+                <option value="Luxembourg">Luxembourg</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Boutons de soumission -->
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            (click)="cancelEdit()">
+            Annuler
+          </button>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="isLoading || profileForm.invalid">
+            <i class="fas" [class.fa-spinner]="isLoading" [class.fa-save]="!isLoading"></i>
+            {{ isLoading ? 'Sauvegarde...' : 'Sauvegarder les modifications' }}
+          </button>
+        </div>
+      </form>
+
+      <!-- Mode visualisation -->
+      <ng-template #viewMode>
+        <div class="profile-info">
+          <div class="info-grid">
+            <div class="info-item">
+              <label>Prénom</label>
+              <p>{{ profile.id_utilisateur.prenom }}</p>
+            </div>
+            <div class="info-item">
+              <label>Nom</label>
+              <p>{{ profile.id_utilisateur.nom }}</p>
+            </div>
+            <div class="info-item">
+              <label>Email</label>
+              <p>{{ profile.id_utilisateur.email }}</p>
+            </div>
+            <div class="info-item">
+              <label>Téléphone</label>
+              <p>{{ profile.id_utilisateur.telephone || 'Non renseigné' }}</p>
+            </div>
+            <div class="info-item">
+              <label>Type de client</label>
+              <p>
+                <span class="badge" [class]="profile.type_client">
+                  {{ getClientTypeLabel(profile.type_client) }}
+                </span>
+              </p>
+            </div>
+            <div class="info-item" *ngIf="profile.raison_sociale">
+              <label>Raison sociale</label>
+              <p>{{ profile.raison_sociale }}</p>
+            </div>
+            <div class="info-item" *ngIf="profile.siret">
+              <label>SIRET</label>
+              <p>{{ profile.siret }}</p>
+            </div>
+          </div>
+
+          <!-- Adresse en mode visualisation -->
+          <div class="info-section" *ngIf="profile.adresse || profile.ville">
+            <h3>Adresse</h3>
+            <div class="address-info">
+              <p *ngIf="profile.adresse">{{ profile.adresse }}</p>
+              <p *ngIf="profile.code_postal || profile.ville">
+                {{ profile.code_postal }} {{ profile.ville }}
+              </p>
+              <p *ngIf="profile.pays">{{ profile.pays }}</p>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Cartes secondaires -->
+    <div class="secondary-cards">
+      <!-- Carte statut du compte -->
+      <div class="info-card">
+        <div class="card-header">
+          <h3><i class="fas fa-user-circle"></i> Statut du Compte</h3>
+        </div>
+        <div class="card-content">
+          <div class="status-item">
+            <label>Type d'utilisateur</label>
+            <p class="user-type">{{ getRoleLabel(profile.id_utilisateur.type_utilisateur) }}</p>
+          </div>
+          <div class="status-item">
+            <label>Statut</label>
+            <p>
+              <span class="status-badge" [class]="profile.id_utilisateur.statut">
+                {{ profile.id_utilisateur.statut === 'actif' ? 'Actif' : 'Inactif' }}
+              </span>
+            </p>
+          </div>
+          <div class="status-item">
+            <label>Membre depuis</label>
+            <p>{{ profile.id_utilisateur.date_creation | date:'dd/MM/yyyy' }}</p>
+          </div>
+          <div class="status-item">
+            <label>Dernière modification</label>
+            <p>{{ profile.id_utilisateur.date_modification | date:'dd/MM/yyyy' }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte actions rapides -->
+      <div class="info-card">
+        <div class="card-header">
+          <h3><i class="fas fa-bolt"></i> Actions Rapides</h3>
+        </div>
+        <div class="card-content">
+          <button class="action-btn" (click)="toggleEdit()">
+            <i class="fas fa-edit"></i>
+            Modifier le profil
+          </button>
+          <button class="action-btn">
+            <i class="fas fa-lock"></i>
+            Changer le mot de passe
+          </button>
+          <button class="action-btn">
+            <i class="fas fa-bell"></i>
+            Préférences de notification
+          </button>
+          <button class="action-btn">
+            <i class="fas fa-download"></i>
+            Exporter mes données
+          </button>
+        </div>
+      </div>
+
+      <!-- Carte statistiques -->
+      <div class="info-card" *ngIf="profile.id_utilisateur.type_utilisateur === 'proprietaire'">
+        <div class="card-header">
+          <h3><i class="fas fa-chart-bar"></i> Mes Statistiques</h3>
+        </div>
+        <div class="card-content">
+          <div class="stat-item">
+            <div class="stat-value">3</div>
+            <div class="stat-label">Biens gérés</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">85%</div>
+            <div class="stat-label">Taux d'occupation</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">12</div>
+            <div class="stat-label">Contrats actifs</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Carte statistiques locataire -->
+      <div class="info-card" *ngIf="profile.id_utilisateur.type_utilisateur === 'locataire'">
+        <div class="card-header">
+          <h3><i class="fas fa-home"></i> Mes Locations</h3>
+        </div>
+        <div class="card-content">
+          <div class="stat-item">
+            <div class="stat-value">2</div>
+            <div class="stat-label">Contrats actifs</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">24</div>
+            <div class="stat-label">Paiements effectués</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value">100%</div>
+            <div class="stat-label">Paiements à jour</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Chargement en cours...</p>
+    </div>
+  </div>
+</div>

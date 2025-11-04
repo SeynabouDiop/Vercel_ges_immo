@@ -1,0 +1,92 @@
+<nav class="client-navbar">
+  <div class="nav-container">
+    <!-- Logo et marque -->
+    <div class="nav-brand">
+      <div class="logo">
+        <i class="fas fa-home"></i>
+      </div>
+      <div class="brand-text">
+        <h2>Mon Espace Client</h2>
+        <span class="role-badge" [class.proprietaire]="currentUser?.type_utilisateur === 'proprietaire'">
+          {{ currentUser?.type_utilisateur === 'proprietaire' ? 'Propriétaire' : 'Locataire' }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Navigation principale -->
+    <div class="nav-menu">
+      <ul class="nav-links">
+        <li>
+          <a routerLink="/client/dashboard" routerLinkActive="active" class="nav-link">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Tableau de bord</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/client/profile" routerLinkActive="active" class="nav-link">
+            <i class="fas fa-user"></i>
+            <span>Mon Profil</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link">
+            <i class="fas fa-file-contract"></i>
+            <span>Mes Contrats</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link">
+            <i class="fas fa-receipt"></i>
+            <span>Mes Paiements</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link">
+            <i class="fas fa-question-circle"></i>
+            <span>Support</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Section utilisateur -->
+    <div class="nav-user">
+      <div class="user-info">
+        <div class="user-avatar" [class.proprietaire]="currentUser?.type_utilisateur === 'proprietaire'">
+          <i class="fas fa-user"></i>
+        </div>
+        <div class="user-details">
+          <span class="user-name">{{ currentUser?.prenom }} {{ currentUser?.nom }}</span>
+          <span class="user-email">{{ currentUser?.email }}</span>
+        </div>
+      </div>
+
+      <!-- Menu déroulant utilisateur -->
+      <div class="user-dropdown">
+        <button class="dropdown-toggle" (click)="toggleDropdown()">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+        <div class="dropdown-menu" [class.show]="isDropdownOpen">
+          <a routerLink="/client/profile" class="dropdown-item">
+            <i class="fas fa-user-edit"></i>
+            Modifier mon profil
+          </a>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-bell"></i>
+            Notifications
+          </a>
+          <a href="#" class="dropdown-item">
+            <i class="fas fa-cog"></i>
+            Paramètres
+          </a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout-btn" (click)="logout()">
+            <i class="fas fa-sign-out-alt"></i>
+            Déconnexion
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+

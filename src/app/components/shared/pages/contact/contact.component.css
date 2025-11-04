@@ -1,0 +1,37 @@
+.bg-image {
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(50, 50, 50, 0.7)), url('/img10.jpg');
+  height: 60vh;
+  min-height: 400px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+.contact-info {
+  background-color: transparent;
+  padding: 30px;
+}
+
+.contact-info h4 {
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.contact-info p {
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+}
+
+.contact-info i {
+  margin-right: 10px;
+  color: var(--primary-color);
+}
+
+.form-control {
+  margin-bottom: 20px;
+}

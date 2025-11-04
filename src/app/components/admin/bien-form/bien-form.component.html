@@ -1,0 +1,304 @@
+<div class="bien-form-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="fas" [class.fa-home]="!isEditMode" [class.fa-edit]="isEditMode"></i>
+        {{ pageTitle }}
+      </h1>
+      <p>
+        <span *ngIf="isEditMode">Modifiez les informations du bien immobilier</span>
+        <span *ngIf="!isEditMode">Ajoutez un nouveau bien immobilier à votre portefeuille</span>
+      </p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="onCancel()">
+        <i class="fas fa-arrow-left"></i>
+        Retour
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages d'alerte -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i>
+    {{ successMessage }}
+  </div>
+
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Chargement du bien...</p>
+    </div>
+  </div>
+
+  <!-- Formulaire -->
+  <form [formGroup]="bienForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading" class="bien-form">
+
+    <!-- Informations Générales -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fas fa-info-circle"></i>
+        <h2>Informations Générales</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="id_type_bien" class="form-label">Type de bien *</label>
+          <select id="id_type_bien" formControlName="id_type_bien" class="form-control"
+            [class.error]="id_type_bien?.invalid && id_type_bien?.touched">
+            <option value="">Sélectionnez un type</option>
+            <option *ngFor="let type of typesBien" [value]="type._id">
+              {{ type.libelle }}
+            </option>
+          </select>
+          <div class="error-message" *ngIf="id_type_bien?.invalid && id_type_bien?.touched">
+            Le type de bien est requis
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="titre" class="form-label">Titre *</label>
+          <input type="text" id="titre" formControlName="titre" class="form-control"
+            [class.error]="titre?.invalid && titre?.touched" placeholder="Ex: Bel appartement T3 centre-ville">
+          <div class="error-message" *ngIf="titre?.invalid && titre?.touched">
+            <span *ngIf="titre?.errors?.['required']">Le titre est requis</span>
+            <span *ngIf="titre?.errors?.['minlength']">Minimum 5 caractères</span>
+            <span *ngIf="titre?.errors?.['maxlength']">Maximum 255 caractères</span>
+          </div>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="description" class="form-label">Description</label>
+          <textarea id="description" formControlName="description" class="form-control" rows="4"
+            placeholder="Décrivez le bien en détail..."></textarea>
+          <small class="form-hint">{{ description?.value?.length || 0 }}/2000 caractères</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adresse -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fas fa-map-marker-alt"></i>
+        <h2>Adresse</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="adresse" class="form-label">Adresse *</label>
+          <input type="text" id="adresse" formControlName="adresse" class="form-control"
+            [class.error]="adresse?.invalid && adresse?.touched" placeholder="Numéro et nom de rue">
+          <div class="error-message" *ngIf="adresse?.invalid && adresse?.touched">
+            L'adresse est requise
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="complement_adresse" class="form-label">Complément d'adresse</label>
+          <input type="text" id="complement_adresse" formControlName="complement_adresse" class="form-control"
+            placeholder="Étage, bâtiment, etc.">
+        </div>
+
+        <div class="form-group">
+          <label for="code_postal" class="form-label">Code postal *</label>
+          <input type="text" id="code_postal" formControlName="code_postal" class="form-control"
+            [class.error]="code_postal?.invalid && code_postal?.touched" placeholder="75001">
+          <div class="error-message" *ngIf="code_postal?.invalid && code_postal?.touched">
+            <span *ngIf="code_postal?.errors?.['required']">Le code postal est requis</span>
+            <span *ngIf="code_postal?.errors?.['pattern']">Format invalide (5 chiffres)</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="ville" class="form-label">Ville *</label>
+          <input type="text" id="ville" formControlName="ville" class="form-control"
+            [class.error]="ville?.invalid && ville?.touched" placeholder="Paris">
+          <div class="error-message" *ngIf="ville?.invalid && ville?.touched">
+            La ville est requise
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="pays" class="form-label">Pays</label>
+          <select id="pays" formControlName="pays" class="form-control">
+            <option value="France">France</option>
+            <option value="Belgique">Belgique</option>
+            <option value="Suisse">Suisse</option>
+            <option value="Luxembourg">Luxembourg</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Caractéristiques Physiques -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fas fa-ruler-combined"></i>
+        <h2>Caractéristiques Physiques</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="surface_habitable" class="form-label">Surface habitable (m²) *</label>
+          <input type="number" id="surface_habitable" formControlName="surface_habitable" class="form-control"
+            [class.error]="surface_habitable?.invalid && surface_habitable?.touched" min="1" step="0.5"
+            placeholder="Ex: 75">
+          <div class="error-message" *ngIf="surface_habitable?.invalid && surface_habitable?.touched">
+            <span *ngIf="surface_habitable?.errors?.['required']">La surface est requise</span>
+            <span *ngIf="surface_habitable?.errors?.['min']">Minimum 1 m²</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="surface_terrain" class="form-label">Surface terrain (m²)</label>
+          <input type="number" id="surface_terrain" formControlName="surface_terrain" class="form-control" min="0"
+            step="0.5" placeholder="Ex: 150">
+        </div>
+
+        <div class="form-group">
+          <label for="nb_pieces" class="form-label">Nombre de pièces</label>
+          <input type="number" id="nb_pieces" formControlName="nb_pieces" class="form-control" min="0"
+            placeholder="Ex: 3">
+        </div>
+
+        <div class="form-group">
+          <label for="nb_chambres" class="form-label">Nombre de chambres</label>
+          <input type="number" id="nb_chambres" formControlName="nb_chambres" class="form-control" min="0"
+            placeholder="Ex: 2">
+        </div>
+
+        <div class="form-group">
+          <label for="nb_sdb" class="form-label">Salles de bain</label>
+          <input type="number" id="nb_sdb" formControlName="nb_sdb" class="form-control" min="0" placeholder="Ex: 1">
+        </div>
+
+        <div class="form-group">
+          <label for="nb_wc" class="form-label">WC</label>
+          <input type="number" id="nb_wc" formControlName="nb_wc" class="form-control" min="0" placeholder="Ex: 1">
+        </div>
+
+        <!-- CORRECTION : Utilisation de currentYear au lieu de new Date().getFullYear() -->
+        <div class="form-group">
+          <label for="annee_construction" class="form-label">Année de construction</label>
+          <input type="number" id="annee_construction" formControlName="annee_construction" class="form-control"
+            min="1800" [max]="currentYear" placeholder="Ex: 2010">
+          <div class="error-message" *ngIf="annee_construction?.errors?.['invalidYear']">
+            L'année doit être comprise entre 1800 et {{ currentYear }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Performance Énergétique -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fas fa-leaf"></i>
+        <h2>Performance Énergétique</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="dpe_energie" class="form-label">DPE Énergie</label>
+          <select id="dpe_energie" formControlName="dpe_energie" class="form-control">
+            <option value="">Non renseigné</option>
+            <option *ngFor="let classe of classesDPE" [value]="classe.value">
+              {{ classe.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="dpe_ges" class="form-label">DPE GES</label>
+          <select id="dpe_ges" formControlName="dpe_ges" class="form-control">
+            <option value="">Non renseigné</option>
+            <option *ngFor="let classe of classesDPE" [value]="classe.value">
+              {{ classe.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- État et Statut -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fas fa-clipboard-check"></i>
+        <h2>État et Statut</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="etat_bien" class="form-label">État du bien *</label>
+          <select id="etat_bien" formControlName="etat_bien" class="form-control">
+            <option *ngFor="let etat of etatsBien" [value]="etat.value">
+              {{ etat.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="statut" class="form-label">Statut *</label>
+          <select id="statut" formControlName="statut" class="form-control">
+            <option *ngFor="let statut of statutsBien" [value]="statut.value">
+              {{ statut.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prix et Finances -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fas fa-euro-sign"></i>
+        <h2>Prix et Finances</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="prix_vente" class="form-label">Prix de vente (€)</label>
+          <input type="number" id="prix_vente" formControlName="prix_vente" class="form-control" min="0" step="1000"
+            placeholder="Ex: 250000">
+        </div>
+
+        <div class="form-group">
+          <label for="prix_location" class="form-label">Prix location/mois (€)</label>
+          <input type="number" id="prix_location" formControlName="prix_location" class="form-control" min="0" step="10"
+            placeholder="Ex: 750">
+        </div>
+
+        <div class="form-group">
+          <label for="charges_mensuelles" class="form-label">Charges mensuelles (€)</label>
+          <input type="number" id="charges_mensuelles" formControlName="charges_mensuelles" class="form-control" min="0"
+            step="5" placeholder="Ex: 100">
+        </div>
+
+        <div class="form-group">
+          <label for="depot_garantie" class="form-label">Dépôt de garantie (€)</label>
+          <input type="number" id="depot_garantie" formControlName="depot_garantie" class="form-control" min="0"
+            step="100" placeholder="Ex: 1500">
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions du formulaire -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">
+        Annuler
+      </button>
+
+      <button type="submit" class="btn btn-primary" [disabled]="isSubmitting || bienForm.invalid">
+        <i class="fas" [class.fa-spinner]="isSubmitting" [class.fa-save]="!isSubmitting"></i>
+        {{ submitButtonText }}
+      </button>
+    </div>
+  </form>
+</div>

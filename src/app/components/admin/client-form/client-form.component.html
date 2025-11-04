@@ -1,0 +1,307 @@
+<div class="client-form-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="fas" [class.fa-user-edit]="isEditMode" [class.fa-user-plus]="!isEditMode"></i>
+        {{ pageTitle }}
+      </h1>
+      <p>
+        <span *ngIf="isEditMode">Modifiez les informations du client</span>
+        <span *ngIf="!isEditMode">Ajoutez un nouveau client à votre plateforme</span>
+      </p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="onCancel()">
+        <i class="fas fa-arrow-left"></i>
+        Retour
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages d'alerte -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i>
+    {{ successMessage }}
+  </div>
+
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ successMessage }}
+  </div>
+
+  <!-- Indicateur de chargement -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Chargement du client...</p>
+    </div>
+  </div>
+
+  <!-- Formulaire -->
+  <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" *ngIf="!isLoading" class="client-form">
+
+    <!-- Informations Personnelles -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fas fa-user"></i>
+        <h2>Informations Personnelles</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="prenom" class="form-label">Prénom *</label>
+          <input
+            type="text"
+            id="prenom"
+            formControlName="prenom"
+            class="form-control"
+            [class.error]="prenom?.invalid && prenom?.touched"
+            placeholder="Prénom du client">
+          <div class="error-message" *ngIf="prenom?.invalid && prenom?.touched">
+            <span *ngIf="prenom?.errors?.['required']">Le prénom est requis</span>
+            <span *ngIf="prenom?.errors?.['minlength']">Minimum 2 caractères</span>
+            <span *ngIf="prenom?.errors?.['maxlength']">Maximum 50 caractères</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="nom" class="form-label">Nom *</label>
+          <input
+            type="text"
+            id="nom"
+            formControlName="nom"
+            class="form-control"
+            [class.error]="nom?.invalid && nom?.touched"
+            placeholder="Nom du client">
+          <div class="error-message" *ngIf="nom?.invalid && nom?.touched">
+            <span *ngIf="nom?.errors?.['required']">Le nom est requis</span>
+            <span *ngIf="nom?.errors?.['minlength']">Minimum 2 caractères</span>
+            <span *ngIf="nom?.errors?.['maxlength']">Maximum 50 caractères</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="form-label">Email *</label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="form-control"
+            [class.error]="email?.invalid && email?.touched"
+            [readonly]="isEditMode"
+            placeholder="email@exemple.com">
+          <div class="error-message" *ngIf="email?.invalid && email?.touched">
+            <span *ngIf="email?.errors?.['required']">L'email est requis</span>
+            <span *ngIf="email?.errors?.['email']">Format d'email invalide</span>
+          </div>
+          <small *ngIf="isEditMode" class="form-hint">L'email ne peut pas être modifié</small>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone" class="form-label">Téléphone</label>
+          <input
+            type="tel"
+            id="telephone"
+            formControlName="telephone"
+            class="form-control"
+            placeholder="+33 1 23 45 67 89">
+        </div>
+      </div>
+    </div>
+
+    <!-- Type de Compte -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fas fa-user-tag"></i>
+        <h2>Type de Compte</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="type_utilisateur" class="form-label">Rôle *</label>
+          <select
+            id="type_utilisateur"
+            formControlName="type_utilisateur"
+            class="form-control">
+            <option *ngFor="let type of userTypes" [value]="type.value">
+              <i class="fas" [ngClass]="type.icon"></i>
+              {{ type.label }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="type_client" class="form-label">Type de Client *</label>
+          <select
+            id="type_client"
+            formControlName="type_client"
+            class="form-control">
+            <option *ngFor="let type of clientTypes" [value]="type.value">
+              {{ type.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Informations Société (conditionnel) -->
+      <div class="company-fields" *ngIf="isSociete">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="raison_sociale" class="form-label">Raison Sociale *</label>
+            <input
+              type="text"
+              id="raison_sociale"
+              formControlName="raison_sociale"
+              class="form-control"
+              placeholder="Nom de l'entreprise">
+          </div>
+
+          <div class="form-group">
+            <label for="siret" class="form-label">SIRET</label>
+            <input
+              type="text"
+              id="siret"
+              formControlName="siret"
+              class="form-control"
+              placeholder="123 456 789 01234">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Adresse -->
+    <div class="form-section">
+      <div class="section-header">
+        <i class="fas fa-map-marker-alt"></i>
+        <h2>Adresse</h2>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label for="adresse" class="form-label">Adresse</label>
+          <input
+            type="text"
+            id="adresse"
+            formControlName="adresse"
+            class="form-control"
+            placeholder="Numéro et nom de rue">
+        </div>
+
+        <div class="form-group">
+          <label for="code_postal" class="form-label">Code Postal</label>
+          <input
+            type="text"
+            id="code_postal"
+            formControlName="code_postal"
+            class="form-control"
+            placeholder="75001">
+        </div>
+
+        <div class="form-group">
+          <label for="ville" class="form-label">Ville</label>
+          <input
+            type="text"
+            id="ville"
+            formControlName="ville"
+            class="form-control"
+            placeholder="Paris">
+        </div>
+
+        <div class="form-group">
+          <label for="pays" class="form-label">Pays</label>
+          <select
+            id="pays"
+            formControlName="pays"
+            class="form-control">
+            <option *ngFor="let country of countries" [value]="country.value">
+              {{ country.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mot de passe (seulement en création) -->
+    <div class="form-section" *ngIf="!isEditMode">
+      <div class="section-header">
+        <i class="fas fa-lock"></i>
+        <h2>Sécurité</h2>
+        <button type="button" class="btn btn-sm btn-outline" (click)="generatePassword()">
+          <i class="fas fa-dice"></i>
+          Générer un mot de passe
+        </button>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="mot_de_passe" class="form-label">Mot de passe *</label>
+          <div class="password-input-group">
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              id="mot_de_passe"
+              formControlName="mot_de_passe"
+              class="form-control"
+              [class.error]="mot_de_passe?.invalid && mot_de_passe?.touched"
+              placeholder="Mot de passe sécurisé">
+            <button
+              type="button"
+              class="btn-password-toggle"
+              (click)="showPassword = !showPassword">
+              <i class="fas" [class.fa-eye]="!showPassword" [class.fa-eye-slash]="showPassword"></i>
+            </button>
+          </div>
+          <div class="error-message" *ngIf="mot_de_passe?.invalid && mot_de_passe?.touched">
+            <span *ngIf="mot_de_passe?.errors?.['required']">Le mot de passe est requis</span>
+            <span *ngIf="mot_de_passe?.errors?.['minlength']">Minimum 6 caractères</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="confirm_password" class="form-label">Confirmation *</label>
+          <div class="password-input-group">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              id="confirm_password"
+              formControlName="confirm_password"
+              class="form-control"
+              [class.error]="confirm_password?.invalid && confirm_password?.touched"
+              placeholder="Confirmer le mot de passe">
+            <button
+              type="button"
+              class="btn-password-toggle"
+              (click)="showConfirmPassword = !showConfirmPassword">
+              <i class="fas" [class.fa-eye]="!showConfirmPassword" [class.fa-eye-slash]="showConfirmPassword"></i>
+            </button>
+          </div>
+          <div class="error-message" *ngIf="confirm_password?.invalid && confirm_password?.touched">
+            <span *ngIf="confirm_password?.errors?.['required']">La confirmation est requise</span>
+            <span *ngIf="confirm_password?.errors?.['passwordMismatch']">Les mots de passe ne correspondent pas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="password-strength" *ngIf="mot_de_passe?.value">
+        <div class="strength-indicator">
+          <div class="strength-bar" [class]="getPasswordStrength()"></div>
+        </div>
+        <small class="strength-text">{{ getPasswordStrengthText() }}</small>
+      </div>
+    </div>
+
+    <!-- Actions du formulaire -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()">
+        Annuler
+      </button>
+
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="isSubmitting || clientForm.invalid">
+        <i class="fas" [class.fa-spinner]="isSubmitting" [class.fa-save]="!isSubmitting"></i>
+        {{ submitButtonText }}
+      </button>
+    </div>
+  </form>
+</div>

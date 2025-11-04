@@ -1,0 +1,255 @@
+<div class="visite-list-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="fas fa-calendar-alt"></i>
+        Gestion des Visites
+      </h1>
+      <p>Planifiez et suivez les visites de vos biens immobiliers</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" routerLink="/admin/visites/new">
+        <i class="fas fa-plus"></i>
+        Nouvelle Visite
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages d'alerte -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i>
+    {{ successMessage }}
+  </div>
+
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Barre d'outils -->
+  <div class="toolbar">
+    <!-- Recherche -->
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Rechercher une visite...">
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters">
+      <select [(ngModel)]="statutFilter" (change)="onFilterChange()" class="filter-select">
+        <option value="all">Tous les statuts</option>
+        <option value="planifiee">Planifiées</option>
+        <option value="confirmee">Confirmées</option>
+        <option value="terminee">Terminées</option>
+        <option value="annulee">Annulées</option>
+      </select>
+
+      <input
+        type="date"
+        [(ngModel)]="dateFilter"
+        (change)="onFilterChange()"
+        class="filter-select"
+        placeholder="Filtrer par date">
+
+      <button class="btn btn-secondary" (click)="exportVisites()">
+        <i class="fas fa-download"></i>
+        Exporter
+      </button>
+    </div>
+  </div>
+
+  <!-- Tableau des visites -->
+  <div class="visites-table-container">
+    <div class="table-header">
+      <h3>Liste des Visites ({{ filteredVisites.length }})</h3>
+      <div class="table-actions">
+        <span class="items-per-page">
+          Affichage :
+          <select [(ngModel)]="itemsPerPage" (change)="applyFilters()">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Chargement des visites...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && filteredVisites.length === 0">
+      <i class="fas fa-calendar-times"></i>
+      <h4>Aucune visite trouvée</h4>
+      <p>Aucune visite ne correspond à vos critères de recherche.</p>
+      <button class="btn btn-primary" routerLink="/admin/visites/new">
+        <i class="fas fa-plus"></i>
+        Planifier une visite
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive" *ngIf="!isLoading && filteredVisites.length > 0">
+      <table class="visites-table">
+        <thead>
+          <tr>
+            <th>Bien</th>
+            <th>Client</th>
+            <th>Date & Heure</th>
+            <th>Agent</th>
+            <th>Statut</th>
+            <th>Résultat</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let visite of paginatedVisites" class="visite-row">
+            <!-- Bien -->
+            <td class="bien-info">
+              <div class="bien-avatar">
+                <i class="fas fa-home"></i>
+              </div>
+              <div class="bien-details">
+                <strong>{{ visite.id_bien.titre }}</strong>
+                <small>{{ visite.id_bien.ville }}</small>
+                <small *ngIf="visite.id_bien.prix_location" class="price">
+                  {{ visite.id_bien.prix_location }}€/mois
+                </small>
+              </div>
+            </td>
+
+            <!-- Client -->
+            <td class="client-info">
+              <div *ngIf="visite.id_client; else noClient">
+                <strong>{{ visite.id_client.prenom }} {{ visite.id_client.nom }}</strong>
+                <small>{{ visite.id_client.email }}</small>
+                <small *ngIf="visite.id_client.telephone">
+                  <i class="fas fa-phone"></i>
+                  {{ visite.id_client.telephone }}
+                </small>
+              </div>
+              <ng-template #noClient>
+                <span class="text-muted">Non assigné</span>
+              </ng-template>
+            </td>
+
+            <!-- Date & Heure -->
+            <td class="date-cell">
+              <strong>{{ visite.date_visite | date:'dd/MM/yyyy' }}</strong>
+              <small>{{ visite.date_visite | date:'HH:mm' }}</small>
+              <small class="duree">Durée: {{ visite.duree_estimee }}min</small>
+            </td>
+
+            <!-- Agent -->
+            <td class="agent-info">
+              <strong>{{ visite.id_agent.prenom }} {{ visite.id_agent.nom }}</strong>
+              <small>{{ visite.id_agent.email }}</small>
+            </td>
+
+            <!-- Statut -->
+            <td>
+              <span class="status-badge" [ngClass]="getStatutBadgeClass(visite.statut)">
+                {{ getStatutLabel(visite.statut) }}
+              </span>
+              <div *ngIf="visite.statut === 'planifiee'" class="statut-actions">
+                <button
+                  class="btn-action btn-confirm"
+                  (click)="updateVisiteStatut(visite, 'confirmee')"
+                  title="Confirmer la visite">
+                  <i class="fas fa-check"></i>
+                </button>
+                <button
+                  class="btn-action btn-cancel"
+                  (click)="updateVisiteStatut(visite, 'annulee')"
+                  title="Annuler la visite">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </td>
+
+            <!-- Résultat -->
+            <td>
+              <span *ngIf="visite.resultat"
+                    class="resultat-badge"
+                    [ngClass]="getResultatBadgeClass(visite.resultat)">
+                {{ getResultatLabel(visite.resultat) }}
+              </span>
+              <span *ngIf="!visite.resultat && visite.statut === 'terminee'" class="text-muted">
+                Non renseigné
+              </span>
+              <span *ngIf="visite.statut !== 'terminee'" class="text-muted">
+                -
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button
+                  class="btn-action btn-edit"
+                  (click)="editVisite(visite._id!)"
+                  title="Modifier la visite">
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <button
+                  class="btn-action btn-notes"
+                  *ngIf="visite.notes"
+                  title="Voir les notes">
+                  <i class="fas fa-sticky-note"></i>
+                </button>
+
+                <button
+                  class="btn-action btn-delete"
+                  (click)="deleteVisite(visite)"
+                  title="Supprimer la visite">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="!isLoading && filteredVisites.length > 0">
+      <div class="pagination-info">
+        Affichage de {{ displayRange }} sur {{ filteredVisites.length }} visites
+      </div>
+
+      <div class="pagination-controls">
+        <button
+          class="btn-pagination"
+          [disabled]="currentPage === 1"
+          (click)="changePage(currentPage - 1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <button
+          *ngFor="let page of getPages()"
+          class="btn-pagination"
+          [class.active]="page === currentPage"
+          (click)="changePage(page)">
+          {{ page }}
+        </button>
+
+        <button
+          class="btn-pagination"
+          [disabled]="currentPage === totalPages"
+          (click)="changePage(currentPage + 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

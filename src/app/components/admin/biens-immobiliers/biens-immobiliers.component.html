@@ -1,0 +1,240 @@
+<div class="biens-immobiliers-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="fas fa-building"></i>
+        Gestion des Biens Immobiliers
+      </h1>
+      <p>Gérez l'ensemble des biens immobiliers de votre portefeuille</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" routerLink="/admin/biens/new">
+        <i class="fas fa-plus"></i>
+        Nouveau Bien
+      </button>
+    </div>
+  </div>
+
+  <!-- Messages d'alerte -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i>
+    {{ successMessage }}
+  </div>
+
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Barre d'outils -->
+  <div class="toolbar">
+    <!-- Recherche -->
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+        placeholder="Rechercher un bien...">
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters">
+      <select [(ngModel)]="typeFilter" (change)="applyFilters()" class="filter-select">
+        <option value="all">Tous les types</option>
+        <option *ngFor="let type of typesBien" [value]="type._id">
+          {{ type.libelle }}
+        </option>
+      </select>
+
+      <select [(ngModel)]="statutFilter" (change)="applyFilters()" class="filter-select">
+        <option value="all">Tous les statuts</option>
+        <option value="disponible">Disponible</option>
+        <option value="loue">Loué</option>
+        <option value="vendu">Vendu</option>
+        <option value="reserve">Réservé</option>
+        <option value="indisponible">Indisponible</option>
+      </select>
+
+      <input
+        type="text"
+        [(ngModel)]="villeFilter"
+        (input)="applyFilters()"
+        class="filter-select"
+        placeholder="Ville...">
+
+      <button class="btn btn-secondary" (click)="loadBiens()">
+        <i class="fas fa-refresh"></i>
+        Actualiser
+      </button>
+    </div>
+  </div>
+
+  <!-- Tableau des biens -->
+  <div class="biens-table-container">
+    <div class="table-header">
+      <h3>Liste des Biens ({{ totalItems }})</h3>
+      <div class="table-actions">
+        <span class="items-per-page">
+          Affichage :
+          <select [(ngModel)]="itemsPerPage" (change)="applyFilters()">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Chargement des biens...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && biens.length === 0">
+      <i class="fas fa-building"></i>
+      <h4>Aucun bien immobilier</h4>
+      <p>Commencez par ajouter votre premier bien immobilier.</p>
+      <button class="btn btn-primary" routerLink="/admin/biens/new">
+        <i class="fas fa-plus"></i>
+        Ajouter un bien
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive" *ngIf="!isLoading && biens.length > 0">
+      <table class="biens-table">
+        <thead>
+          <tr>
+            <th>Référence</th>
+            <th>Bien</th>
+            <th>Type</th>
+            <th>Localisation</th>
+            <th>Surface</th>
+            <th>Prix</th>
+            <th>Statut</th>
+            <th>Date création</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bien of paginatedBiens" class="bien-row">
+            <td class="reference-cell">
+              <strong>{{ bien.reference }}</strong>
+            </td>
+            <td class="bien-info">
+              <div class="bien-avatar">
+                <i class="fas fa-home"></i>
+              </div>
+              <div class="bien-details">
+                <strong>{{ bien.titre }}</strong>
+                <small *ngIf="bien.description">{{ bien.description | slice:0:50 }}...</small>
+              </div>
+            </td>
+            <td>
+              <span class="type-badge">
+                {{ getTypeBienLibelle(bien.id_type_bien) }}
+              </span>
+            </td>
+            <td class="localisation-cell">
+              <div class="adresse">
+                <i class="fas fa-map-marker-alt"></i>
+                {{ bien.adresse }}
+              </div>
+              <div class="ville">
+                {{ bien.code_postal }} {{ bien.ville }}
+              </div>
+            </td>
+            <td class="surface-cell">
+              <div class="surface">
+                <i class="fas fa-arrows-alt"></i>
+                {{ bien.surface_habitable }} m²
+              </div>
+              <small *ngIf="bien.nb_pieces">{{ bien.nb_pieces }} pièces</small>
+            </td>
+            <td class="prix-cell">
+              <div class="prix-location" *ngIf="bien.prix_location">
+                <i class="fas fa-euro-sign"></i>
+                {{ bien.prix_location }}€/mois
+              </div>
+              <div class="prix-vente" *ngIf="bien.prix_vente">
+                <i class="fas fa-tag"></i>
+                {{ bien.prix_vente }}€
+              </div>
+              <small *ngIf="!bien.prix_location && !bien.prix_vente">Non précisé</small>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="getStatutBadgeClass(bien.statut)">
+                {{ getStatutLabel(bien.statut) }}
+              </span>
+            </td>
+            <td class="date-cell">
+              {{ bien.date_creation | date:'dd/MM/yyyy' }}
+              <small>{{ bien.date_creation | date:'HH:mm' }}</small>
+            </td>
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button
+                  class="btn-action btn-view"
+                  [routerLink]="['/admin/biens', bien._id]"
+                  title="Voir le détail">
+                  <i class="fas fa-eye"></i>
+                </button>
+
+                <button
+                  class="btn-action btn-edit"
+                  (click)="editBien(bien._id!)"
+                  title="Modifier le bien">
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <button
+                  class="btn-action btn-delete"
+                  (click)="deleteBien(bien)"
+                  title="Supprimer le bien">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="!isLoading && biens.length > 0">
+      <div class="pagination-info">
+        Affichage de {{ (currentPage - 1) * itemsPerPage + 1 }} à
+        {{ Math.min(currentPage * itemsPerPage, totalItems) }} sur {{ totalItems }} biens
+      </div>
+
+      <div class="pagination-controls">
+        <button
+          class="btn-pagination"
+          [disabled]="currentPage === 1"
+          (click)="changePage(currentPage - 1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <button
+          *ngFor="let page of getPages()"
+          class="btn-pagination"
+          [class.active]="page === currentPage"
+          (click)="changePage(page)">
+          {{ page }}
+        </button>
+
+        <button
+          class="btn-pagination"
+          [disabled]="currentPage === totalPages"
+          (click)="changePage(currentPage + 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

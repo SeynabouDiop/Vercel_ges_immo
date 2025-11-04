@@ -1,0 +1,170 @@
+.visite-list-container {
+  padding: 2rem;
+  background: #f8f9fa;
+  min-height: calc(100vh - 70px);
+}
+
+/* Styles similaires à client-list.component.css avec adaptations */
+.visite-row:hover {
+  background: #f8f9fa;
+}
+
+.bien-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bien-avatar {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1rem;
+}
+
+.bien-details strong {
+  display: block;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.bien-details small {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+  display: block;
+}
+
+.price {
+  color: #27ae60;
+  font-weight: 600;
+}
+
+.client-info strong {
+  display: block;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.client-info small {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+  display: block;
+}
+
+.date-cell strong {
+  display: block;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.date-cell small {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+  display: block;
+}
+
+.duree {
+  color: #e67e22 !important;
+  font-weight: 500;
+}
+
+.agent-info strong {
+  display: block;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.agent-info small {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+}
+
+/* Badges */
+.status-badge,
+.resultat-badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.badge-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.badge-info {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.badge-success {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-danger {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.badge-secondary {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+/* Actions de statut */
+.statut-actions {
+  display: flex;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.btn-confirm {
+  background: #d4edda;
+  color: #155724;
+}
+
+.btn-confirm:hover {
+  background: #c3e6cb;
+}
+
+.btn-cancel {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.btn-cancel:hover {
+  background: #f5c6cb;
+}
+
+/* Actions */
+.btn-notes {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.btn-notes:hover {
+  background: #ffeaa7;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bien-info {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  .statut-actions {
+    justify-content: center;
+  }
+}

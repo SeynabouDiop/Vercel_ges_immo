@@ -1,0 +1,95 @@
+<section class="login-section m-5 pt-5 container-xxl d-flex justify-content-center align-items-center min-vh-100">
+  <div class="login-admin-container">
+    <div class="login-admin-card">
+      <div class="card-content pt-5">
+        <div class="card-header">
+          <div class="admin-logo">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h2>Connexion Administrateur</h2>
+          <p>Accès réservé au personnel autorisé</p>
+        </div>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+          <!-- Email Field -->
+          <div class="form-group">
+            <label for="email" class="form-label">Email Administrateur</label>
+            <div class="input-group">
+              <span class="input-group-text rounded-0"><i class="fas fa-envelope"></i></span>
+              <input type="email" id="email" formControlName="email" class="form-control border-0 rounded-0"
+                [class.error]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                placeholder="admin@example.com">
+            </div>
+            <div class="error-message" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+              <span *ngIf="loginForm.get('email')?.errors?.['required']">L'email est requis</span>
+              <span *ngIf="loginForm.get('email')?.errors?.['email']">Format d'email invalide</span>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="form-group">
+            <label for="password" class="form-label">Mot de passe</label>
+            <div class="input-group">
+              <span class="input-group-text rounded-0"><i class="fas fa-lock"></i></span>
+              <input type="password" id="password" formControlName="mot_de_passe" class="form-control"
+                [class.error]="loginForm.get('mot_de_passe')?.invalid && loginForm.get('mot_de_passe')?.touched"
+                placeholder="Votre mot de passe administrateur">
+              <span class="input-group-text password-toggle rounded-0" (click)="togglePasswordVisibility()">
+                <i class="fas fa-eye" *ngIf="!showPassword"></i>
+                <i class="fas fa-eye-slash" *ngIf="showPassword"></i>
+              </span>
+            </div>
+            <div class="error-message"
+              *ngIf="loginForm.get('mot_de_passe')?.invalid && loginForm.get('mot_de_passe')?.touched">
+              <span *ngIf="loginForm.get('mot_de_passe')?.errors?.['required']">Le mot de passe est requis</span>
+              <span *ngIf="loginForm.get('mot_de_passe')?.errors?.['minlength']">Minimum 6 caractères</span>
+            </div>
+          </div>
+
+          <!-- Options -->
+          <div class="form-options">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="rememberMe">
+              <label class="form-check-label" for="rememberMe">
+                Se souvenir de moi
+              </label>
+            </div>
+            <a href="#" class="forgot-password">Mot de passe oublié ?</a>
+          </div>
+
+          <!-- Error Message -->
+          <div *ngIf="errorMessage" class="alert alert-error text-white rounded-0">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ errorMessage }}
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn main-btn rounded-0" [disabled]="isLoading || loginForm.invalid">
+            <span *ngIf="!isLoading">
+              <i class="fas fa-sign-in-alt"></i>
+              Se connecter
+            </span>
+            <span *ngIf="isLoading" class="loading">
+              <i class="fas fa-spinner fa-spin"></i>
+              Connexion...
+            </span>
+          </button>
+        </form>
+
+        <!-- Links -->
+        <div class="auth-links">
+          <p>
+            <a routerLink="/login" class="auth-link">
+              <i class="fas fa-user me-2"></i>
+              Connexion standard
+            </a>
+          </p>
+          <div class="security-notice rounded-0">
+            <i class="fas fa-info-circle"></i>
+            <small>Cet accès est sécurisé et réservé aux administrateurs du système.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

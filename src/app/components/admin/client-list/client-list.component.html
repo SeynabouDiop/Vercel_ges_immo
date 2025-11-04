@@ -1,0 +1,259 @@
+<div class="client-list-container">
+  <!-- En-tête -->
+<!-- En-tête avec onglets -->
+<div class="page-header">
+  <div class="header-content">
+    <h1>
+      <i class="fas fa-users"></i>
+      Gestion des Utilisateurs
+    </h1>
+    <p>Gérez l'ensemble des utilisateurs de votre plateforme</p>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-primary" routerLink="/admin/clients/new">
+      <i class="fas fa-user-plus"></i>
+      Nouvel Utilisateur
+    </button>
+    <button class="btn btn-secondary" routerLink="/admin/agents/new">
+      <i class="fas fa-briefcase"></i>
+      Nouvel Agent
+    </button>
+  </div>
+</div>
+
+
+  <!-- Messages d'alerte -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i>
+    {{ successMessage }}
+  </div>
+
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Barre d'outils -->
+  <div class="toolbar">
+    <!-- Recherche -->
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (input)="onSearchChange()"
+        placeholder="Rechercher un client...">
+    </div>
+
+    <!-- Filtres -->
+    <div class="filters">
+      <select [(ngModel)]="typeFilter" (change)="onFilterChange()" class="filter-select">
+        <option value="all">Tous les types</option>
+        <option value="locataire">Locataires</option>
+        <option value="proprietaire">Propriétaires</option>
+        <option value="agent">Agents</option>
+      </select>
+
+      <select [(ngModel)]="statusFilter" (change)="onFilterChange()" class="filter-select">
+        <option value="all">Tous les statuts</option>
+        <option value="actif">Actifs</option>
+        <option value="inactif">Inactifs</option>
+        <option value="suspendu">Suspendus</option>
+      </select>
+
+      <button class="btn btn-secondary" (click)="exportClients()">
+        <i class="fas fa-download"></i>
+        Exporter
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon total">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ totalClients }}</h3>
+        <p>Clients Totaux</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon active">
+        <i class="fas fa-user-check"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ activeClients }}</h3>
+        <p>Clients Actifs</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon owners">
+        <i class="fas fa-user-tie"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ ownerClients }}</h3>
+        <p>Propriétaires</p>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon tenants">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="stat-content">
+        <h3>{{ tenantClients }}</h3>
+        <p>Locataires</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau des clients -->
+  <div class="clients-table-container">
+    <div class="table-header">
+      <h3>Liste des Clients ({{ filteredClients.length }})</h3>
+      <div class="table-actions">
+        <span class="items-per-page">
+          Affichage :
+          <select [(ngModel)]="itemsPerPage" (change)="applyFilters()">
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </span>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Chargement des clients...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && filteredClients.length === 0">
+      <i class="fas fa-users-slash"></i>
+      <h4>Aucun client trouvé</h4>
+      <p>Aucun client ne correspond à vos critères de recherche.</p>
+      <button class="btn btn-primary" routerLink="/admin/clients/new">
+        <i class="fas fa-user-plus"></i>
+        Ajouter un client
+      </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive" *ngIf="!isLoading && filteredClients.length > 0">
+      <table class="clients-table">
+        <thead>
+          <tr>
+            <th>Client</th>
+            <th>Contact</th>
+            <th>Type</th>
+            <th>Statut</th>
+            <th>Date d'inscription</th>
+            <th class="actions-column">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let client of paginatedClients" class="client-row">
+            <td class="client-info">
+              <div class="client-avatar">
+                <i class="fas" [ngClass]="getClientTypeIcon(client.id_utilisateur.type_utilisateur)"></i>
+              </div>
+              <div class="client-details">
+                <strong>{{ client.id_utilisateur.prenom }} {{ client.id_utilisateur.nom }}</strong>
+                <small>ID: {{ client.id_utilisateur.id | slice:0:8 }}...</small>
+              </div>
+            </td>
+            <td class="contact-info">
+              <div class="email">{{ client.id_utilisateur.email }}</div>
+              <div class="phone" *ngIf="client.id_utilisateur.telephone">
+                <i class="fas fa-phone"></i>
+                {{ client.id_utilisateur.telephone }}
+              </div>
+              <div class="phone" *ngIf="!client.id_utilisateur.telephone">
+                <i class="fas fa-phone-slash"></i>
+                Non renseigné
+              </div>
+            </td>
+            <td>
+              <span class="type-badge" [ngClass]="client.id_utilisateur.type_utilisateur">
+                <i class="fas" [ngClass]="getClientTypeIcon(client.id_utilisateur.type_utilisateur)"></i>
+                {{ getClientTypeLabel(client.id_utilisateur.type_utilisateur) }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [ngClass]="client.id_utilisateur.statut">
+                {{ getStatusLabel(client.id_utilisateur.statut) }}
+              </span>
+            </td>
+            <td class="date-cell">
+              {{ client.id_utilisateur.date_creation | date:'dd/MM/yyyy' }}
+              <small>{{ client.id_utilisateur.date_creation | date:'HH:mm' }}</small>
+            </td>
+            <td class="actions-cell">
+              <div class="action-buttons">
+                <button
+                  class="btn-action btn-edit"
+                  (click)="editClient(client.id_utilisateur.id)"
+                  title="Modifier le client">
+                  <i class="fas fa-edit"></i>
+                </button>
+
+                <button
+                  class="btn-action btn-status"
+                  [ngClass]="client.id_utilisateur.statut === 'actif' ? 'btn-inactive' : 'btn-active'"
+                  (click)="toggleClientStatus(client)"
+                  [title]="client.id_utilisateur.statut === 'actif' ? 'Désactiver' : 'Activer'">
+                  <i class="fas" [ngClass]="client.id_utilisateur.statut === 'actif' ? 'fa-pause' : 'fa-play'"></i>
+                </button>
+
+                <button
+                  class="btn-action btn-delete"
+                  (click)="deleteClient(client)"
+                  title="Supprimer le client">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="!isLoading && filteredClients.length > 0">
+      <div class="pagination-info">
+        Affichage de {{ displayRange }} sur {{ filteredClients.length }} clients
+      </div>
+
+      <div class="pagination-controls">
+        <button
+          class="btn-pagination"
+          [disabled]="currentPage === 1"
+          (click)="changePage(currentPage - 1)">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <button
+          *ngFor="let page of getPages()"
+          class="btn-pagination"
+          [class.active]="page === currentPage"
+          (click)="changePage(page)">
+          {{ page }}
+        </button>
+
+        <button
+          class="btn-pagination"
+          [disabled]="currentPage === totalPages"
+          (click)="changePage(currentPage + 1)">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

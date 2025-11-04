@@ -1,0 +1,267 @@
+<div class="dashboard-client">
+  <!-- En-tête personnalisé -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Mon Tableau de Bord</h1>
+      
+      <div class="user-badge" [class.proprietaire]="currentUser?.type_utilisateur === 'proprietaire'">
+        <i class="fas" [class.fa-user-tie]="currentUser?.type_utilisateur === 'proprietaire'"
+                      [class.fa-user]="currentUser?.type_utilisateur === 'locataire'"></i>
+        {{ currentUser?.type_utilisateur === 'proprietaire' ? 'Propriétaire' : 'Locataire' }}
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" routerLink="/client/profile">
+        <i class="fas fa-user-edit"></i>
+        Modifier mon profil
+      </button>
+      <div class="date-display">
+        <i class="fas fa-calendar-alt"></i>
+        {{ currentDate | date:'fullDate' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Cartes personnelles -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon contract">
+        <i class="fas fa-file-contract"></i>
+      </div>
+      <div class="stat-content">
+        <h3>2</h3>
+        <p>Contrats Actifs</p>
+        <span class="stat-status active">En cours</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon payment">
+        <i class="fas fa-euro-sign"></i>
+      </div>
+      <div class="stat-content">
+        <h3>750€</h3>
+        <p>Prochain Paiement</p>
+        <span class="stat-due">Échéance: 05/12/2024</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon maintenance">
+        <i class="fas fa-tools"></i>
+      </div>
+      <div class="stat-content">
+        <h3>1</h3>
+        <p>Demandes en Cours</p>
+        <span class="stat-status pending">En attente</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon documents">
+        <i class="fas fa-folder"></i>
+      </div>
+      <div class="stat-content">
+        <h3>12</h3>
+        <p>Documents</p>
+        <span class="stat-link">Voir tous</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenu principal -->
+  <div class="dashboard-content">
+    <!-- Section gauche -->
+    <div class="content-left">
+      <!-- Mes contrats actifs -->
+      <div class="contracts-section">
+        <div class="section-header">
+          <h3>Mes Contrats Actifs</h3>
+          <a href="#" class="view-all">Voir historique</a>
+        </div>
+        <div class="contracts-list">
+          <div class="contract-item">
+            <div class="contract-icon">
+              <i class="fas fa-home"></i>
+            </div>
+            <div class="contract-details">
+              <h4>Appartement T3 - Paris 15ème</h4>
+              <p>Contrat de location • 750€/mois</p>
+              <div class="contract-meta">
+                <span class="meta-item">
+                  <i class="fas fa-calendar"></i>
+                  Début: 01/01/2024
+                </span>
+                <span class="meta-item">
+                  <i class="fas fa-flag"></i>
+                  Durée: 3 ans
+                </span>
+              </div>
+            </div>
+            <div class="contract-status active">
+              Actif
+            </div>
+          </div>
+
+          <div class="contract-item">
+            <div class="contract-icon">
+              <i class="fas fa-building"></i>
+            </div>
+            <div class="contract-details">
+              <h4>Studio - Montreuil</h4>
+              <p>Contrat de location • 550€/mois</p>
+              <div class="contract-meta">
+                <span class="meta-item">
+                  <i class="fas fa-calendar"></i>
+                  Début: 15/03/2024
+                </span>
+                <span class="meta-item">
+                  <i class="fas fa-flag"></i>
+                  Durée: 1 an
+                </span>
+              </div>
+            </div>
+            <div class="contract-status active">
+              Actif
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Derniers paiements -->
+      <div class="payments-section">
+        <div class="section-header">
+          <h3>Derniers Paiements</h3>
+          <a href="#" class="view-all">Voir tout</a>
+        </div>
+        <div class="payments-list">
+          <div class="payment-item paid">
+            <div class="payment-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="payment-details">
+              <h4>Novembre 2024</h4>
+              <p>Loyer appartement T3</p>
+              <span class="payment-date">Payé le 28/11/2024</span>
+            </div>
+            <div class="payment-amount">
+              750€
+            </div>
+          </div>
+
+          <div class="payment-item paid">
+            <div class="payment-icon">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="payment-details">
+              <h4>Octobre 2024</h4>
+              <p>Loyer appartement T3</p>
+              <span class="payment-date">Payé le 29/10/2024</span>
+            </div>
+            <div class="payment-amount">
+              750€
+            </div>
+          </div>
+
+          <div class="payment-item upcoming">
+            <div class="payment-icon">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div class="payment-details">
+              <h4>Décembre 2024</h4>
+              <p>Loyer appartement T3</p>
+              <span class="payment-date">Échéance: 05/12/2024</span>
+            </div>
+            <div class="payment-amount">
+              750€
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section droite -->
+    <div class="content-right">
+      <!-- Actions rapides -->
+      <div class="quick-actions">
+        <h3>Actions Rapides</h3>
+        <div class="actions-list">
+          <button class="action-btn">
+            <i class="fas fa-file-invoice-dollar"></i>
+            <span>Effectuer un paiement</span>
+          </button>
+          <button class="action-btn">
+            <i class="fas fa-tools"></i>
+            <span>Demande d'intervention</span>
+          </button>
+          <button class="action-btn">
+            <i class="fas fa-download"></i>
+            <span>Télécharger mes documents</span>
+          </button>
+          <button class="action-btn">
+            <i class="fas fa-question-circle"></i>
+            <span>Centre d'aide</span>
+          </button>
+          <button class="action-btn" routerLink="/client/profile">
+            <i class="fas fa-user-cog"></i>
+            <span>Modifier mes informations</span>
+          </button>
+          <button class="action-btn">
+            <i class="fas fa-envelope"></i>
+            <span>Contacter le support</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Prochaines échéances -->
+      <div class="deadlines-section">
+        <h3>Prochaines Échéances</h3>
+        <div class="deadlines-list">
+          <div class="deadline-item">
+            <div class="deadline-date">
+              <span class="day">05</span>
+              <span class="month">DÉC</span>
+            </div>
+            <div class="deadline-details">
+              <p>Paiement loyer</p>
+              <span class="deadline-amount">750€</span>
+            </div>
+          </div>
+          <div class="deadline-item">
+            <div class="deadline-date">
+              <span class="day">15</span>
+              <span class="month">DÉC</span>
+            </div>
+            <div class="deadline-details">
+              <p>Révision contrat</p>
+              <span class="deadline-info">Studio Montreuil</span>
+            </div>
+          </div>
+          <div class="deadline-item">
+            <div class="deadline-date">
+              <span class="day">20</span>
+              <span class="month">DÉC</span>
+            </div>
+            <div class="deadline-details">
+              <p>Visite technique</p>
+              <span class="deadline-info">Appartement T3</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Support urgent -->
+      <div class="support-card">
+        <div class="support-header">
+          <i class="fas fa-life-ring"></i>
+          <h4>Support Urgent</h4>
+        </div>
+        <p>Problème urgent avec votre logement ?</p>
+        <button class="btn btn-emergency">
+          <i class="fas fa-phone"></i>
+          Contacter en urgence
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,138 @@
+<section class="login-section m-5 container-xxl d-flex justify-content-center align-items-center min-vh-100">
+  <div class="container login rounded-0">
+      <div class="row align-items-center">
+          <!-- Colonne 1 : Illustration ou Description -->
+          <div class="col-md-6 wow animate__animated animate__fadeInRight">
+              <div class="illustration">
+                  <img src="/signup.png" alt="Illustration">
+                  <h3>Rejoignez Notre Plateforme</h3>
+                  <p>
+                      Créez votre compte pour accéder à tous nos services immobiliers exclusifs.
+                  </p>
+              </div>
+          </div>
+
+          <!-- Colonne 2 : Formulaire d'Inscription -->
+          <div class="col-md-6 wow animate__animated animate__fadeInLeft" data-wow-delay="0.2s">
+              <div class="login-form">
+                  <h2>Créer un compte</h2>
+                  <p>Rejoignez notre plateforme immobilière</p>
+
+                  <form (ngSubmit)="onSubmit()" class="register-form">
+                      <!-- Personal Information -->
+                      <div class="form-row">
+                          <div class="form-group">
+                              <input
+                                  type="text"
+                                  class="form-control rounded-0 shadow-none border-0"
+                                  [(ngModel)]="registerData.nom"
+                                  name="nom"
+                                  placeholder="Votre nom"
+                                  required>
+                          </div>
+
+                          <div class="form-group">
+                              <input
+                                  type="text"
+                                  class="form-control rounded-0 shadow-none border-0"
+                                  [(ngModel)]="registerData.prenom"
+                                  name="prenom"
+                                  placeholder="Votre prénom"
+                                  required>
+                          </div>
+                      </div>
+
+                      <!-- Contact Information -->
+                      <div class="form-group">
+                          <input
+                              type="email"
+                              class="form-control rounded-0 shadow-none border-0"
+                              [(ngModel)]="registerData.email"
+                              name="email"
+                              placeholder="votre@email.com"
+                              required>
+                      </div>
+
+                      <div class="form-group">
+                          <input
+                              type="tel"
+                              class="form-control rounded-0 shadow-none border-0"
+                              [(ngModel)]="registerData.telephone"
+                              name="telephone"
+                              placeholder="Votre numéro de téléphone">
+                      </div>
+
+                      <!-- User Type -->
+                      <div class="form-group">
+                          <select
+                              class="form-control rounded-0 shadow-none border-0"
+                              [(ngModel)]="registerData.type_utilisateur"
+                              name="type_utilisateur">
+                              <option value="locataire">Locataire</option>
+                              <option value="proprietaire">Propriétaire</option>
+                          </select>
+                      </div>
+
+                      <!-- Password Fields -->
+                      <div class="form-row">
+                          <div class="form-group">
+                              <input
+                                  type="password"
+                                  class="form-control rounded-0 shadow-none border-0"
+                                  [(ngModel)]="registerData.mot_de_passe"
+                                  name="mot_de_passe"
+                                  placeholder="Min. 6 caractères"
+                                  required
+                                  minlength="6">
+                          </div>
+
+                          <div class="form-group">
+                              <input
+                                  type="password"
+                                  class="form-control rounded-0 shadow-none border-0"
+                                  [(ngModel)]="confirmPassword"
+                                  name="confirmPassword"
+                                  placeholder="Retapez votre mot de passe"
+                                  required>
+                          </div>
+                      </div>
+
+                      <!-- Password Match Indicator -->
+                      <div *ngIf="registerData.mot_de_passe && confirmPassword" class="password-match">
+                          <div
+                              [class]="registerData.mot_de_passe === confirmPassword ? 'match-success' : 'match-error'">
+                              <i [class]="registerData.mot_de_passe === confirmPassword ? 'fas fa-check icon-success' : 'fas fa-times icon-error'"></i>
+                              {{ registerData.mot_de_passe === confirmPassword ? 'Les mots de passe correspondent' : 'Les mots de passe ne correspondent pas' }}
+                          </div>
+                      </div>
+
+                      <!-- Error Message -->
+                      <div *ngIf="errorMessage" class="alert alert-error rounded-0 shadow-none">
+                          <i class="fas fa-exclamation-circle"></i>
+                          {{ errorMessage }}
+                      </div>
+
+                      <!-- Submit Button - CORRECTION APPLIQUÉE -->
+                      <button
+                          type="submit"
+                          class="btn main-btn rounded-0 w-100"
+                          [disabled]="isLoading || !registerData.nom || !registerData.prenom || !registerData.email || !registerData.mot_de_passe || registerData.mot_de_passe !== confirmPassword">
+                          <span *ngIf="!isLoading">Créer mon compte</span>
+                          <span *ngIf="isLoading" class="loading">
+                              <i class="spinner"></i>
+                              Inscription...
+                          </span>
+                      </button>
+                  </form>
+
+                  <!-- Login Link -->
+                  <div class="auth-footer">
+                      <p>Déjà un compte ?
+                          <a routerLink="/login" class="auth-link">Se connecter</a>
+                      </p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>

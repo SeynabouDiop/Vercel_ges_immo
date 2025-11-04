@@ -1,0 +1,149 @@
+<div class="caracteristiques-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>
+        <i class="fas fa-list"></i>
+        Gestion des Caractéristiques
+      </h1>
+      <p>Gérez les caractéristiques disponibles pour les biens immobiliers</p>
+    </div>
+  </div>
+
+  <!-- Messages d'alerte -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i>
+    {{ successMessage }}
+  </div>
+
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-triangle"></i>
+    {{ errorMessage }}
+  </div>
+
+  <div class="caracteristiques-content">
+    <!-- Formulaire -->
+    <div class="form-card">
+      <div class="card-header">
+        <h3>
+          <i class="fas" [class.fa-plus]="!isEditing" [class.fa-edit]="isEditing"></i>
+          {{ isEditing ? 'Modifier la caractéristique' : 'Nouvelle caractéristique' }}
+        </h3>
+      </div>
+      <div class="card-body">
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="libelle" class="form-label">Libellé *</label>
+              <input
+                type="text"
+                id="libelle"
+                [(ngModel)]="currentCaracteristique.libelle"
+                name="libelle"
+                class="form-control"
+                placeholder="Ex: Piscine, Climatisation..."
+                required>
+            </div>
+
+            <div class="form-group">
+              <label for="categorie" class="form-label">Catégorie *</label>
+              <select
+                id="categorie"
+                [(ngModel)]="currentCaracteristique.categorie"
+                name="categorie"
+                class="form-control"
+                required>
+                <option *ngFor="let cat of categories.slice(1)" [value]="cat.value">
+                  {{ cat.label }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="cancelEdit()"
+              *ngIf="isEditing">
+              Annuler
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="isLoading || !currentCaracteristique.libelle">
+              <i class="fas" [class.fa-spinner]="isLoading" [class.fa-save]="!isLoading"></i>
+              {{ isEditing ? 'Modifier' : 'Créer' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Liste des caractéristiques -->
+    <div class="list-card">
+      <div class="card-header">
+        <h3>
+          <i class="fas fa-th-list"></i>
+          Liste des Caractéristiques ({{ filteredCaracteristiques.length }})
+        </h3>
+        <div class="filter-control">
+          <select
+            [(ngModel)]="selectedCategorie"
+            (change)="onCategorieChange()"
+            class="form-control">
+            <option *ngFor="let cat of categories" [value]="cat.value">
+              {{ cat.label }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="isLoading">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Chargement des caractéristiques...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!isLoading && filteredCaracteristiques.length === 0">
+          <i class="fas fa-inbox"></i>
+          <h4>Aucune caractéristique trouvée</h4>
+          <p>Aucune caractéristique ne correspond à vos critères de filtrage.</p>
+        </div>
+
+        <!-- Liste -->
+        <div class="caracteristiques-list" *ngIf="!isLoading && filteredCaracteristiques.length > 0">
+          <div *ngFor="let caracteristique of filteredCaracteristiques" class="caracteristique-item">
+            <div class="caracteristique-info">
+              <div class="caracteristique-icon">
+                <i class="fas" [ngClass]="getCategorieIcon(caracteristique.categorie)"></i>
+              </div>
+              <div class="caracteristique-details">
+                <h4>{{ caracteristique.libelle }}</h4>
+                <span class="categorie-badge" [ngClass]="caracteristique.categorie">
+                  {{ getCategorieLabel(caracteristique.categorie) }}
+                </span>
+              </div>
+            </div>
+            <div class="caracteristique-actions">
+              <button
+                class="btn-action btn-edit"
+                (click)="editCaracteristique(caracteristique)"
+                title="Modifier">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button
+                class="btn-action btn-delete"
+                (click)="deleteCaracteristique(caracteristique)"
+                title="Supprimer">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
