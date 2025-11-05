@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:5000/api',
+  apiUrl: 'https://render-ges-immo.onrender.com/api',
   appName: 'Gestion Immobilière',
   version: '1.0.0'
 };
