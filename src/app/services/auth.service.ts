@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 })
 export class AuthService {
 
-  private apiUrl = environment.apiUrl;
+  private apiUrl = `${environment.apiUrl}/auth`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
