@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { AuthResponse, LoginRequest, RegisterRequest, User } from '../models/user.model';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../environments/environment';
+//import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private apiUrl = environment.apiUrl;
+  //private apiUrl = environment.apiUrl;
+  private apiUrl = 'https://render-ges-immo.onrender.com/api';
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
 
